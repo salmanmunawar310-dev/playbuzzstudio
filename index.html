@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playbuzz Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #150C28;
+    --bg-alt: #0E0720;
+    --bg-card: #1E1238;
+    --coral: #FF6A4D;
+    --amber: #FFB84C;
+    --buzz: #8C6BFF;
+    --buzz-soft: #B9A6FF;
+    --text: #F6F2FF;
+    --text-dim: #9C90BE;
+    --border: rgba(246,242,255,0.12);
+    --radius-lg: 26px;
+    --radius-sm: 14px;
+    --gradient-buzz: linear-gradient(120deg, var(--coral), var(--amber) 50%, var(--buzz));
+  }
+
+  *{margin:0; padding:0; box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(140,107,255,0.16), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 0%, rgba(255,106,77,0.14), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Space Grotesk', sans-serif;
+    line-height:1.5;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{color:inherit; text-decoration:none;}
+  ul{list-style:none;}
+  img{max-width:100%; display:block;}
+  button{font-family:inherit;}
+
+  h1,h2,h3{
+    font-family:'Bungee', 'Space Grotesk', sans-serif;
+    font-weight:400;
+    line-height:1.08;
+    letter-spacing:0.01em;
+  }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--buzz-soft);
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:7px; height:7px;
+    border-radius:50%;
+    background:var(--coral);
+    box-shadow:0 0 0 3px rgba(255,106,77,0.22);
+    flex-shrink:0;
+  }
+
+  .container{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 clamp(20px, 4vw, 32px);
+  }
+
+  :focus-visible{
+    outline:3px solid var(--buzz-soft);
+    outline-offset:3px;
+    border-radius:6px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:rgba(14,7,32,0.78);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--border);
+  }
+
+  nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px clamp(20px, 4vw, 32px);
+    max-width:1180px;
+    margin:0 auto;
+    position:relative;
+  }
+
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Bungee', sans-serif;
+    font-size:1.05rem;
+    letter-spacing:0.01em;
+  }
+
+  .logo-mark{
+    width:36px; height:36px;
+    border-radius:11px;
+    background:var(--gradient-buzz);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace;
+    font-weight:600;
+    font-size:0.95rem;
+    color:#150C28;
+    transform:rotate(-6deg);
+    flex-shrink:0;
+  }
+
+  .nav-links{
+    display:flex;
+    gap:clamp(20px, 3vw, 36px);
+    font-size:0.95rem;
+    font-weight:500;
+  }
+
+  .nav-links a{
+    position:relative;
+    padding-bottom:4px;
+    color:var(--text-dim);
+    transition:color 0.2s ease;
+  }
+  .nav-links a:hover{color:var(--text);}
+  .nav-links a::after{
+    content:'';
+    position:absolute;
+    left:0; bottom:0;
+    width:0; height:2px;
+    background:var(--coral);
+    transition:width 0.25s ease;
+  }
+  .nav-links a:hover::after{width:100%;}
+
+  .nav-cta{
+    background:var(--gradient-buzz);
+    color:#150C28;
+    font-weight:700;
+    padding:10px 22px;
+    border-radius:100px;
+    font-size:0.88rem;
+    white-space:nowrap;
+    transition:transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .nav-cta:hover{transform:translateY(-2px); box-shadow:0 8px 22px rgba(255,106,77,0.32);}
+
+  .nav-right{display:flex; align-items:center; gap:18px;}
+
+  .menu-toggle{
+    display:none;
+    background:none;
+    border:1px solid var(--border);
+    color:var(--text);
+    width:42px; height:42px;
+    border-radius:10px;
+    cursor:pointer;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:5px;
+  }
+  .menu-toggle span{
+    display:block;
+    width:18px; height:2px;
+    background:var(--text);
+    border-radius:2px;
+    transition:transform 0.25s ease, opacity 0.25s ease;
+  }
+  .menu-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .menu-toggle[aria-expanded="true"] span:nth-child(2){opacity:0;}
+  .menu-toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+  .mobile-panel{
+    display:none;
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.3s ease;
+    background:var(--bg-alt);
+    border-bottom:1px solid var(--border);
+  }
+  .mobile-panel.open{max-height:280px;}
+  .mobile-panel-inner{
+    padding:8px clamp(20px, 4vw, 32px) 26px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  .mobile-panel a{
+    font-size:1rem;
+    color:var(--text-dim);
+    padding:6px 0;
+  }
+  .mobile-panel a:hover{color:var(--text);}
+  .mobile-panel .nav-cta{align-self:flex-start;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    padding:clamp(56px, 9vw, 108px) 0 clamp(48px, 7vw, 76px);
+    overflow:hidden;
+  }
+
+  .hero-inner{
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:clamp(28px, 5vw, 48px);
+    align-items:center;
+    position:relative;
+    z-index:1;
+  }
+
+  .hero h1{
+    font-size:clamp(2.1rem, 5.4vw, 3.6rem);
+    margin:16px 0 22px;
+  }
+  .hero h1 .hl{
+    background:var(--gradient-buzz);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+
+  .hero p{
+    color:var(--text-dim);
+    font-size:clamp(0.98rem, 1.4vw, 1.08rem);
+    max-width:46ch;
+    margin-bottom:30px;
+  }
+
+  .hero-actions{display:flex; gap:14px; flex-wrap:wrap;}
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:14px 26px;
+    border-radius:100px;
+    font-weight:700;
+    font-size:0.95rem;
+    cursor:pointer;
+    border:none;
+    transition:transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .btn-primary{background:var(--gradient-buzz); color:#150C28;}
+  .btn-primary:hover{transform:translateY(-3px); box-shadow:0 12px 28px rgba(140,107,255,0.35);}
+  .btn-ghost{background:transparent; color:var(--text); border:1.5px solid var(--border);}
+  .btn-ghost:hover{border-color:var(--buzz-soft); color:var(--buzz-soft); transform:translateY(-3px);}
+
+  /* Hero cartridge cluster */
+  .hero-art{
+    position:relative;
+    height:clamp(240px, 34vw, 380px);
+  }
+  .float-chip{
+    position:absolute;
+    border-radius:20px;
+    box-shadow:0 20px 44px rgba(0,0,0,0.4);
+    animation:drift 6s ease-in-out infinite;
+  }
+  .chip-1{width:39%; max-width:150px; aspect-ratio:150/190; top:2%; left:20%; background:linear-gradient(160deg, var(--coral), #C23F26); transform:rotate(-9deg); animation-delay:0s;}
+  .chip-2{width:34%; max-width:130px; aspect-ratio:130/170; top:32%; right:6%; background:linear-gradient(160deg, var(--amber), #D98A1E); transform:rotate(8deg); animation-delay:1.2s;}
+  .chip-3{width:29%; max-width:110px; aspect-ratio:110/140; bottom:0; left:2%; background:linear-gradient(160deg, var(--buzz), #5A3FCC); transform:rotate(-4deg); animation-delay:2.1s;}
+  .float-chip::before{
+    content:'';
+    position:absolute;
+    top:16px; left:16px; right:16px;
+    height:34%;
+    background:rgba(14,7,32,0.5);
+    border-radius:10px;
+  }
+  .float-chip::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    border-radius:20px;
+    background:repeating-linear-gradient(180deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 5px);
+    opacity:0.5;
+    pointer-events:none;
+  }
+
+  @keyframes drift{
+    0%,100%{translate:0 0;}
+    50%{translate:0 -14px;}
+  }
+
+  .stat-bar{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    margin-top:clamp(40px, 7vw, 64px);
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+  }
+  .stat{
+    padding:20px 8px;
+    text-align:center;
+    border-right:1px solid var(--border);
+  }
+  .stat:last-child{border-right:none;}
+  .stat .num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(1.2rem, 2.6vw, 1.6rem);
+    font-weight:600;
+    color:var(--amber);
+  }
+  .stat .label{
+    font-size:0.7rem;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-top:4px;
+  }
+
+  /* ---------- GAMES / CARTRIDGE CARDS ---------- */
+  .section{padding:clamp(60px, 9vw, 100px) 0;}
+  .section-head{
+    max-width:560px;
+    margin-bottom:clamp(36px, 6vw, 56px);
+  }
+  .section-head h2{
+    font-size:clamp(1.7rem, 3.6vw, 2.5rem);
+    margin-top:12px;
+  }
+  .section-head p{color:var(--text-dim); margin-top:14px;}
+
+  .game-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:22px;
+  }
+
+  .cartridge{
+    position:relative;
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    padding:16px 16px 22px;
+    transition:transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+  }
+  .cartridge:hover{
+    transform:translateY(-8px) rotate(-1deg);
+    box-shadow:0 22px 44px rgba(0,0,0,0.42);
+    border-color:var(--tab-color, var(--buzz));
+  }
+
+  .cart-tab{
+    height:clamp(96px, 12vw, 120px);
+    border-radius:15px;
+    background:var(--tab-color, var(--buzz));
+    position:relative;
+    display:flex;
+    align-items:flex-end;
+    padding:12px;
+    overflow:hidden;
+  }
+  .cart-tab .ridges{
+    position:absolute;
+    top:10px; right:10px;
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+  }
+  .cart-tab .ridges span{
+    width:24px; height:3px;
+    background:rgba(14,7,32,0.35);
+    border-radius:2px;
+  }
+  .cart-tab .glyph{
+    font-size:clamp(2rem, 5vw, 2.5rem);
+    filter:drop-shadow(0 3px 4px rgba(14,7,32,0.4));
+  }
+
+  .new-badge{
+    position:absolute;
+    top:-10px; right:14px;
+    background:var(--amber);
+    color:#150C28;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.68rem;
+    font-weight:600;
+    padding:5px 10px;
+    border-radius:8px;
+    transform:rotate(6deg);
+    box-shadow:0 6px 14px rgba(0,0,0,0.3);
+    z-index:2;
+  }
+
+  .cart-notch{
+    width:34px; height:7px;
+    background:var(--bg);
+    border-radius:0 0 6px 6px;
+    margin:0 auto;
+  }
+
+  .cartridge h3{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:1.08rem;
+    margin:16px 0 8px;
+  }
+  .cartridge p{
+    color:var(--text-dim);
+    font-size:0.88rem;
+    min-height:56px;
+  }
+
+  .platform-links{
+    display:flex;
+    gap:10px;
+    margin-top:14px;
+  }
+  .platform-links a{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    padding:9px 0;
+    border-radius:10px;
+    background:var(--bg-alt);
+    font-size:0.78rem;
+    font-weight:600;
+    border:1px solid var(--border);
+    transition:border-color 0.2s ease, color 0.2s ease;
+  }
+  .platform-links a:hover{border-color:var(--buzz-soft); color:var(--buzz-soft);}
+
+  /* ---------- CTA BANNER ---------- */
+  .banner{
+    background:var(--bg-alt);
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    padding:clamp(56px, 9vw, 90px) 0;
+    position:relative;
+    overflow:hidden;
+  }
+  .banner::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:repeating-linear-gradient(-45deg, rgba(255,255,255,0.02) 0 2px, transparent 2px 22px);
+  }
+  .banner-inner{
+    position:relative;
+    z-index:1;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:32px;
+    flex-wrap:wrap;
+  }
+  .banner h2{font-size:clamp(1.5rem, 3.4vw, 2.2rem); max-width:520px;}
+  .banner-tags{
+    display:flex;
+    gap:10px;
+    margin-top:18px;
+    flex-wrap:wrap;
+  }
+  .banner-tags span{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    padding:6px 12px;
+    border:1px solid var(--border);
+    border-radius:100px;
+    color:var(--text-dim);
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{padding:40px 0;}
+  .footer-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  .footer-links{display:flex; gap:22px; font-size:0.85rem; color:var(--text-dim); flex-wrap:wrap;}
+  .footer-links a:hover{color:var(--text);}
+  .copyright{font-size:0.8rem; color:var(--text-dim);}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:1024px){
+    .game-grid{grid-template-columns:repeat(3, 1fr);}
+  }
+
+  @media (max-width:900px){
+    .hero-inner{grid-template-columns:1fr;}
+    .hero-art{margin-top:8px;}
+  }
+
+  @media (max-width:768px){
+    .game-grid{grid-template-columns:repeat(2, 1fr);}
+    .stat-bar{grid-template-columns:repeat(2, 1fr);}
+    .stat:nth-child(2){border-right:none;}
+    .stat:nth-child(1),.stat:nth-child(2){border-bottom:1px solid var(--border);}
+  }
+
+  @media (max-width:640px){
+    .nav-links, header > nav > .nav-right > .nav-cta{display:none;}
+    .menu-toggle{display:flex;}
+    .mobile-panel{display:block;}
+    .game-grid{grid-template-columns:1fr;}
+    .banner-inner{flex-direction:column; align-items:flex-start;}
+    .footer-inner{flex-direction:column; align-items:flex-start;}
+  }
+
+  @media (max-width:420px){
+    .hero-actions{flex-direction:column; align-self:stretch;}
+    .hero-actions .btn{justify-content:center;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="#" class="logo">
+      <span class="logo-mark">PS</span>
+      Playbuzz Studio
+    </a>
+    <ul class="nav-links">
+      <li><a href="#games">Games</a></li>
+      <li><a href="#partner">Partner</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="#contact" class="nav-cta">Work with us</a>
+      <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobilePanel">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="mobile-panel" id="mobilePanel">
+    <div class="mobile-panel-inner">
+      <a href="#games">Games</a>
+      <a href="#partner">Partner</a>
+      <a href="#contact">Contact</a>
+      <a href="#contact" class="nav-cta">Work with us</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container hero-inner">
+    <div>
+      <span class="eyebrow">Indie mobile game studio</span>
+      <h1>We build games you<br>open <span class="hl">one more time.</span></h1>
+      <p>Playbuzz Studio crafting fast, funny, unmistakably tactile mobile games — from first prototype to global launch.</p>
+      <div class="hero-actions">
+        <a href="#games" class="btn btn-primary">Browse games</a>
+        <a href="#contact" class="btn btn-ghost">Work with us</a>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="float-chip chip-1"></div>
+      <div class="float-chip chip-2"></div>
+      <div class="float-chip chip-3"></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="stat-bar">
+      <div class="stat"><div class="num">06</div><div class="label">Games shipped</div></div>
+      <div class="stat"><div class="num">02</div><div class="label">Platforms</div></div>
+      <div class="stat"><div class="num">3.1M</div><div class="label">Downloads</div></div>
+      <div class="stat"><div class="num">2024</div><div class="label">Founded</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="games">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Our portfolio</span>
+      <h2>Games worth a second look</h2>
+      <p>A handful of the titles we've shipped — each one small, sharp, and built to be played in short, addictive bursts.</p>
+    </div>
+
+    <div class="game-grid">
+
+      <article class="cartridge" style="--tab-color:var(--coral)">
+        <div class="new-badge">NEW</div>
+        <div class="cart-tab">
+          <div class="ridges"><span></span><span></span><span></span></div>
+          <span class="glyph">🐀</span>
+        </div>
+        <div class="cart-notch"></div>
+        <h3>Rat Prison Escape</h3>
+        <p>Guide a scrappy rat through a 3D prison break, dodging guards and sniffing out shortcuts.</p>
+        <div class="platform-links">
+          <a href="#">Android</a>
+          <a href="#">iOS</a>
+        </div>
+      </article>
+
+      <article class="cartridge" style="--tab-color:var(--amber)">
+        <div class="cart-tab">
+          <div class="ridges"><span></span><span></span><span></span></div>
+          <span class="glyph">🚀</span>
+        </div>
+        <div class="cart-notch"></div>
+        <h3>Comet Sprint</h3>
+        <p>A one-thumb runner where you outpace a collapsing comet field, level after level.</p>
+        <div class="platform-links">
+          <a href="#">Android</a>
+          <a href="#">iOS</a>
+        </div>
+      </article>
+
+      <article class="cartridge" style="--tab-color:var(--buzz)">
+        <div class="cart-tab">
+          <div class="ridges"><span></span><span></span><span></span></div>
+          <span class="glyph">🧩</span>
+        </div>
+        <div class="cart-notch"></div>
+        <h3>Knotwork</h3>
+        <p>Untangle glowing threads across hand-drawn puzzle boards that get stranger the deeper you go.</p>
+        <div class="platform-links">
+          <a href="#">Android</a>
+          <a href="#">iOS</a>
+        </div>
+      </article>
+
+      <article class="cartridge" style="--tab-color:var(--coral)">
+        <div class="cart-tab">
+          <div class="ridges"><span></span><span></span><span></span></div>
+          <span class="glyph">🏁</span>
+        </div>
+        <div class="cart-notch"></div>
+        <h3>Drift Kingdom</h3>
+        <p>Arcade-physics kart racing across five miniature kingdoms, built for quick weekend tournaments.</p>
+        <div class="platform-links">
+          <a href="#">Android</a>
+          <a href="#">iOS</a>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<section class="banner" id="partner">
+  <div class="container banner-inner">
+    <div>
+      <span class="eyebrow">Get in touch</span>
+      <h2>Open to publishing deals, brand partnerships, and licensing.</h2>
+      <div class="banner-tags">
+        <span>Publishing</span>
+        <span>Brand partnerships</span>
+        <span>Licensing</span>
+        <span>Co-development</span>
+      </div>
+    </div>
+    <a href="mailto:hello@playbuzzstudio.example" class="btn btn-primary" id="contact">Email the team</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container footer-inner">
+    <a href="#" class="logo"><span class="logo-mark" style="width:28px;height:28px;font-size:0.8rem;">PS</span>Playbuzz Studio</a>
+    <ul class="footer-links">
+      <li><a href="#games">Games</a></li>
+      <li><a href="#partner">Partner</a></li>
+      <li><a href="mailto:hello@playbuzzstudio.example">Contact</a></li>
+      <li><a href="#">Privacy policy</a></li>
+    </ul>
+    <span class="copyright">© 2026 Playbuzz Studio. All rights reserved.</span>
+  </div>
+</footer>
+
+<script>
+  const toggle = document.querySelector('.menu-toggle');
+  const panel = document.getElementById('mobilePanel');
+  toggle.addEventListener('click', () => {
+    const open = panel.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  panel.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      panel.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+</script>
+
+</body>
+</html>
